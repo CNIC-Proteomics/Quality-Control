@@ -147,6 +147,7 @@ def rangescal(mzml):
 
 
 def hist_report(mzml, l, p, t, pp):
+    fig = plt.figure(figsize=(16, 9))
     id_range, aq_range, bq_range, cq_range, dq_range, rangesl, quantl = rangescal(mzml)
     maxrt = int(mzml["Retention time"].values.max())
     mzmla = mzml.loc[(mzml["ms level"] == l, ["Scan Number", "Retention time", "BPC", "TIC", t, "Scan"])]
@@ -184,7 +185,6 @@ def hist_report(mzml, l, p, t, pp):
         nmin = round(outQ(datah[0][0][t].dropna()).min(), 1)
         bins, nmax, nmin = bins_range(nmax, nmin)
         lgcolor = ["#0000FF", "#FF0000"]
-        fig = plt.figure(figsize=(16, 9))
         gs1 = gridspec.GridSpec(12, 1)
         gs1.update(left=0.05, right=0.52, hspace=0.0, top=0.95, bottom=0.4)
         ax1 = fig.add_subplot(gs1[2:8])
@@ -307,16 +307,17 @@ def hist_report(mzml, l, p, t, pp):
             han.legend_handles[6].set_markersize(11)
         else:
             han.legend_handles[5].set_markersize(11)
-    for num, i in enumerate(r):
-        i.set_ylabel("Counts", fontsize="10", fontweight="bold")
-        i.yaxis.set_major_locator(MaxNLocator(prune="lower"))
-        i.legend(fontsize=8, ncol=2)
+        for num, i in enumerate(r):
+            i.set_ylabel("Counts", fontsize="10", fontweight="bold")
+            i.yaxis.set_major_locator(MaxNLocator(prune="lower"))
+            i.legend(fontsize=8, ncol=2)
 
     pp.savefig(dpi=300)
     plt.close(fig)
 
 
 def bar_report(mzml, l, p, t, pp):
+    fig = plt.figure(figsize=(16, 9))
     id_range, aq_range, bq_range, cq_range, dq_range, rangesl, quantl = rangescal(mzml)
     maxrt = int(mzml["Retention time"].values.max())
     mzmla = mzml.loc[(mzml["ms level"] == l, ["Scan Number", "Retention time", "BPC", "TIC", t, "Scan"])]
@@ -352,7 +353,6 @@ def bar_report(mzml, l, p, t, pp):
         ranges = list(zip([id_range, aq_range, bq_range, cq_range, dq_range], ['IDR', 'R1', 'R2', 'R3', 'R4']))
         legendlab = ["Scans Relative Frequency(%)", "PSMs Relative Frequency(%)"]
         lgcolor = ["#0000FF", "#FF0000"]
-        fig = plt.figure(figsize=(16, 9))
         gs1 = gridspec.GridSpec(12, 1)
         gs1.update(left=0.05, right=0.52, hspace=0.0, top=0.95, bottom=0.4)
         ax1 = fig.add_subplot(gs1[2:8])
@@ -478,10 +478,10 @@ def bar_report(mzml, l, p, t, pp):
             han.legend_handles[6].set_markersize(11)
         else:
             han.legend_handles[5].set_markersize(11)
-    for num, i in enumerate(r):
-        i.set_ylabel("Frequency", fontsize="10", fontweight="bold")
-        i.yaxis.set_major_locator(MaxNLocator(prune="lower"))
-        i.legend(fontsize=8, ncol=2)
+        for num, i in enumerate(r):
+            i.set_ylabel("Frequency", fontsize="10", fontweight="bold")
+            i.yaxis.set_major_locator(MaxNLocator(prune="lower"))
+            i.legend(fontsize=8, ncol=2)
 
     pp.savefig(dpi=300)
     plt.close(fig)
