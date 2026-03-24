@@ -9,12 +9,10 @@ import numpy as np
 from pathlib import Path
 from itertools import repeat
 # Custom modules
-import iso_quan_and_correction as iqc
-import mzml_parser_completo as mpc
-import pratiomsfragger as prms
-import qc_report as qc
-# Ignore numpy warnings
-# np.warnings.filterwarnings("ignore")
+import src.iso_quan_and_correction as iqc
+import src.mzml_parser_completo as mpc
+import src.pratiomsfragger as prms
+import src.qc_report as qc
 
 
 def run_mzml_parse(filesinraw, folderoutraw, ThermoRawFileParserpath):
@@ -23,7 +21,7 @@ def run_mzml_parse(filesinraw, folderoutraw, ThermoRawFileParserpath):
 
 
 def launcher_task(filesin, folders, inpathraw, log):
-    filesmzML = [os.path.join(os.path.dirname(i), folders, os.path.basename(i).replace(".raw", ".mzML")) for i in filesin]
+    filesmzML = [os.path.join(folders, os.path.basename(i).replace(".raw", ".mzML")) for i in filesin]
     filesresult = [i.replace(".mzML", ".result.tsv") for i in filesmzML]
     filesfilteredresult = [i.replace(".mzML", ".filtered.result.tsv") for i in filesmzML]
     filesmzMLparse = [i + ".parse.tsv" for i in filesmzML]
@@ -59,7 +57,7 @@ def launcher_task(filesin, folders, inpathraw, log):
 
 def main(args):
     logging.info("STARTING QUALITY CONTROL WORKFLOW")
-    ROOT_DIR = Path(__file__).parent.parent
+    ROOT_DIR = Path(__file__).parent
     multiprocessing.freeze_support()
     with open(args.params, "r") as f:
         x = f.read().splitlines()

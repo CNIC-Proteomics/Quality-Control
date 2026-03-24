@@ -6,7 +6,7 @@ Created on Mon Sep 16 15:10:16 2019
 """
 import time, pandas as pd
 from lxml import etree as ET
-import numpy as np, base64, zlib, iso_quan_and_correction as iqc, os 
+import numpy as np, base64, zlib, src.iso_quan_and_correction as iqc, os 
 
 def fast_iter(context, func, fh, label, isotag, isocorrm, nl1, nl2, array):
     for event, elem in context:
