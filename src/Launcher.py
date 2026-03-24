@@ -18,12 +18,8 @@ import qc_report as qc
 
 
 def run_mzml_parse(filesinraw, folderoutraw, ThermoRawFileParserpath):
-    # subprocess.run([ThermoRawFileParserpath, filesinraw, folderoutraw, '-f=2', '-m=0'], shell=True)
-    subprocess.run(
-        [ThermoRawFileParserpath, filesinraw, folderoutraw, '-f=2', '-m=0'],
-        check=True,     # <-- raises CalledProcessError on failure
-        shell=True     # safer
-    )
+    subprocess.run([ThermoRawFileParserpath, filesinraw, folderoutraw, '-f=2', '-m=0'],
+                   check=True, shell=True)
 
 
 def launcher_task(filesin, folders, inpathraw, log):

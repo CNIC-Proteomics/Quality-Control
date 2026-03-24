@@ -51,9 +51,9 @@ def FdrXc(df, FDRlvl):
     df = df.sort_values(by="Hyperscore", ascending=False)
     df["rank"] = df.groupby("T_D").cumcount() + 1
     df["rank_T"] = np.where(df["T_D"] == 0, df["rank"], 0)
-    df["rank_T"] = df["rank_T"].replace(to_replace=0, method="ffill")
+    df["rank_T"] = df["rank_T"].replace(0, np.nan).ffill()
     df["rank_D"] = np.where(df["T_D"] == 1, df["rank"], 0)
-    df["rank_D"] = df["rank_D"].replace(to_replace=0, method="ffill")
+    df["rank_D"] = df["rank_D"].replace(0, np.nan).ffill()
     df["rank"] = df.index + 1
     df["FdrXc"] = df["rank_D"] / df["rank_T"]
     df = df[df["FdrXc"] <= FDRlvl]
