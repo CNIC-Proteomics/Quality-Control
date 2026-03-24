@@ -7,7 +7,7 @@ Created on Wed Jul 24 14:12:44 2019
 import numpy as np, pandas as pd, matplotlib.pyplot as plt, matplotlib.gridspec as gridspec
 from matplotlib.ticker import ScalarFormatter, MaxNLocator
 from matplotlib.font_manager import FontProperties
-plt.style.use("seaborn-ticks")
+plt.style.use("seaborn-v0_8-ticks")
 
 class ScalarFormatterForceFormat(ScalarFormatter):
 
