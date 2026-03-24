@@ -6,7 +6,6 @@ Created on Tue Jul  9 14:10:45 2019
 """
 from matplotlib.backends.backend_pdf import PdfPages
 import grc, Preprocess_data as prd, time, os
-import logging
 
 def create_pdf(mzml, fileout, label):
     mzml = mzml
