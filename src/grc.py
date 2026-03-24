@@ -101,10 +101,10 @@ def factors(n):
 
 def quantiles(mzml):
     maxid = mzml["Scan"].idxmax()
-    minid = mzml.index[mzml["Scan Number"] == int(mzml["Precursor Scan"][mzml["Scan"] == mzml["Scan"].min()])][0]
-    q1 = mzml.index[mzml["Scan Number"] == int(mzml["Precursor Scan"][mzml["Scan"] == int(mzml["Scan"].quantile(0.25, interpolation="lower"))])][0]
-    q2 = mzml.index[mzml["Scan Number"] == int(mzml["Precursor Scan"][mzml["Scan"] == int(mzml["Scan"].quantile(0.5, interpolation="lower"))])][0]
-    q3 = mzml.index[mzml["Scan Number"] == int(mzml["Precursor Scan"][mzml["Scan"] == int(mzml["Scan"].quantile(0.75, interpolation="lower"))])][0]
+    minid = mzml.index[mzml["Scan Number"] == int(mzml["Precursor Scan"][mzml["Scan"] == mzml["Scan"].min()].iloc[0])][0]
+    q1 = mzml.index[mzml["Scan Number"] == int(mzml["Precursor Scan"][mzml["Scan"] == int(mzml["Scan"].quantile(0.25, interpolation="lower"))].iloc[0])][0]
+    q2 = mzml.index[mzml["Scan Number"] == int(mzml["Precursor Scan"][mzml["Scan"] == int(mzml["Scan"].quantile(0.5, interpolation="lower"))].iloc[0])][0]
+    q3 = mzml.index[mzml["Scan Number"] == int(mzml["Precursor Scan"][mzml["Scan"] == int(mzml["Scan"].quantile(0.75, interpolation="lower"))].iloc[0])][0]
     id_range = slice(minid, maxid)
     aq_range = slice(minid, q1 - 1)
     bq_range = slice(q1, q2 - 1)
