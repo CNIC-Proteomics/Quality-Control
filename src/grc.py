@@ -580,7 +580,7 @@ def main_report(mzml, pp, label):
     ax3.axis("off")
     mzml = mzml.loc[id_range]
     table2 = mzml.loc[(mzml["ms level"] == 1, ms1)].agg(["max", "min", "median", "mean"]).T
-    table2 = table2.append(mzml.loc[(mzml["ms level"] == 2, ms2)].agg(["max", "min", "median", "mean"]).T)
+    table2 = pd.concat([table2, mzml.loc[mzml["ms level"] == 2, ms2].agg(["max", "min", "median", "mean"]).T], ignore_index=True)
     table2.index = ind
     table2 = table2.loc[loc1, :]
     table2.columns = ["IDR Maximun", "IDR Minimum", "IDR Median", "IDR Mean"]
