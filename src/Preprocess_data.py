@@ -22,13 +22,13 @@ def pre_proccess_Data(filein1, filein2, label, isoname, start):
         mzml["Reporter count"] = np.where(mzml["ms level"] == 1, np.nan, mzml[isoname].count(axis=1))
         mzml["Median reporter int"] = mzml[isoname].median(axis=1)
         mzml["Median reporter int[log10]"] = np.log10(mzml["Median reporter int"])
-        types = {'Scan Number': '"uint32"', 'Retention time': '"float32"',
-         'ms level': '"uint8"', 'Scan header': '"float32"', 'Injection time': '"float32"',
-         'Precursor Scan': '"float32"', 'Precursor m/z': '"float32"',
-         'Charge': '"float32"', 'BPC': '"float32"', 'TIC': '"float32"',
-         'm/z count': '"uint32"', 'Median Intensity': '"float32"',
-         'Reporter count': '"float32"', 'Median reporter int': '"float32"',
-         'Median reporter int[log10]': '"float32"'}
+        types = {'Scan Number': 'uint32', 'Retention time': 'float32',
+         'ms level': 'uint8', 'Scan header': 'float32', 'Injection time': 'float32',
+         'Precursor Scan': 'float32', 'Precursor m/z': 'float32',
+         'Charge': 'float32', 'BPC': 'float32', 'TIC': 'float32',
+         'm/z count': 'uint32', 'Median Intensity': 'float32',
+         'Reporter count': 'float32', 'Median reporter int': 'float32',
+         'Median reporter int[log10]': 'float32'}
         columns = ['Scan Number', 'Retention time', 'ms level', 'Scan header', 'Injection time',
          'Precursor Scan', 'Precursor m/z',
          'TopN',
@@ -43,11 +43,11 @@ def pre_proccess_Data(filein1, filein2, label, isoname, start):
          'Hyperscore', 'Delta Mass [ppm]']
     else:
         types = {
-         'Scan Number': '"uint32"', 'Retention time': '"float32"',
-         'ms level': '"uint8"', 'Scan header': '"float32"', 'Injection time': '"float32"',
-         'Precursor Scan': '"float32"', 'Precursor m/z': '"float32"',
-         'Charge': '"float32"', 'BPC': '"float32"', 'TIC': '"float32"',
-         'm/z count': '"uint32"', 'Median Intensity': '"float32"'}
+         'Scan Number': 'uint32', 'Retention time': 'float32',
+         'ms level': 'uint8', 'Scan header': 'float32', 'Injection time': 'float32',
+         'Precursor Scan': 'float32', 'Precursor m/z': 'float32',
+         'Charge': 'float32', 'BPC': 'float32', 'TIC': 'float32',
+         'm/z count': 'uint32', 'Median Intensity': 'float32'}
         columns = ['Scan Number', 'Retention time', 'ms level', 'Scan header', 'Injection time',
          'Precursor Scan', 'Precursor m/z', 'TopN',
          'Intensity jumps',
