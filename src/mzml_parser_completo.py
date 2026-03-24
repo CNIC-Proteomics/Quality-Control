@@ -6,8 +6,7 @@ Created on Mon Sep 16 15:10:16 2019
 """
 import time, pandas as pd
 from lxml import etree as ET
-import numpy as np, base64, zlib, iso_quan_and_correction as iqc, os
-import logging
+import numpy as np, base64, zlib, iso_quan_and_correction as iqc, os 
 
 def fast_iter(context, func, fh, label, isotag, isocorrm, nl1, nl2, array):
     for event, elem in context:
@@ -102,8 +101,7 @@ def get_spectrum_values(elt, label, isotag, isocorrm, nl1, nl2, array):
 
 def parser(filein, label, isotag, isoname, isocorrm, cor, nl1, nl2, array):
     fileout = filein + ".parse.tsv"
-    stxt = "Processing " + os.path.basename(filein)
-    logging.info("\n" + "**".center(80, "*") + stxt.center(80, " ") + "**".center(80, "*"))
+    # logging.info("Processing " + os.path.basename(filein))
     start = time.time()
     fh = []
     context = ET.iterparse(filein, tag="{http://psi.hupo.org/ms/mzml}spectrum")
@@ -119,6 +117,4 @@ def parser(filein, label, isotag, isoname, isocorrm, cor, nl1, nl2, array):
     fh.to_csv(fileout, "\t")
     end = time.time()
     timer = divmod(end - start, 60)
-    etxt = os.path.basename(fileout)
-    etxt1 = "Generated in " + str(timer[0]) + " Minutes and " + str(round(timer[1], 4)) + " Seconds"
-    logging.info("\n" + "||".center(80, "|") + etxt.center(80, " ") + etxt1.center(80, " ") + "||".center(80, "|"))
+    return str(os.path.basename(fileout)) + " generated in " + str(timer[0]) + " Minutes and " + str(round(timer[1], 4)) + " Seconds"
