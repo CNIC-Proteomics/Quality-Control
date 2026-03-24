@@ -321,167 +321,163 @@ def bar_report(mzml, l, p, t, pp):
     id_range, aq_range, bq_range, cq_range, dq_range, rangesl, quantl = rangescal(mzml)
     maxrt = int(mzml["Retention time"].values.max())
     mzmla = mzml.loc[(mzml["ms level"] == l, ["Scan Number", "Retention time", "BPC", "TIC", t, "Scan"])]
-    if l == 1:
-        if p == 0:
-            mzmlo = mzmla.loc[id_range]
-            data = list(zip([mzmla], ["Scans"]))
-            datah = list(zip([mzmlo], ["Scans"]))
-            cc = ['#ffffcc', '#c2ccff', '#ffa756', '#b1d27b', '#d9544d']
-            dmap = ["#0000FF"]
-        if l == 2 and p == 1:
-            mzml1 = mzmla[mzmla["Scan"].isna()]
-            mzml2 = mzmla.dropna(axis=0, subset=["Scan"])
-            data = list(zip([mzml1, mzml2], ["Scans", "PSMs"]))
-            datah = list(zip([mzmla, mzml2], ["Scans", "PSMs"]))
-            cc = ['#ffffcc', '#cccc99', '#c2ccff', '#8f99cc', '#ffa756', '#cc7423',
-             '#b1d27b', '#7e9f48', '#d9544d', '#a6211a']
-            dmap = ["#0000FF", "#FF0000"]
-    elif l == 2:
-        pass
-    if p == 0:
+    if l == 1 and p == 0:
+        mzmlo = mzmla.loc[id_range]
+        data = list(zip([mzmla], ["Scans"]))
+        datah = list(zip([mzmlo], ["Scans"]))
+        cc = ['#ffffcc', '#c2ccff', '#ffa756', '#b1d27b', '#d9544d']
+        dmap = ["#0000FF"]
+    if l == 2 and p == 1:
+        mzml1 = mzmla[mzmla["Scan"].isna()]
+        mzml2 = mzmla.dropna(axis=0, subset=["Scan"])
+        data = list(zip([mzml1, mzml2], ["Scans", "PSMs"]))
+        datah = list(zip([mzmla, mzml2], ["Scans", "PSMs"]))
+        cc = ['#ffffcc', '#cccc99', '#c2ccff', '#8f99cc', '#ffa756', '#cc7423',
+         '#b1d27b', '#7e9f48', '#d9544d', '#a6211a']
+        dmap = ["#0000FF", "#FF0000"]
+    elif l == 2 and p == 0:
         mzmla = mzmla.dropna(axis=0, subset=["Scan"])
         data = list(zip([mzmla], ["PSMs"]))
         datah = list(zip([mzmla], ["PSMs"]))
         cc = ['#ffffcc', '#c2ccff', '#ffa756', '#b1d27b', '#d9544d']
         dmap = ["#FF0000"]
+    c = [
+     [
+      '#ffffcc', '#c2ccff', '#ffa756', '#b1d27b', '#d9544d'], ['#cccc99', '#8f99cc', '#cc7423', '#7e9f48', '#a6211a']]
+    ec = ['#80804d', '#434d80', '#802800', '#325300', '#5a0000']
+    TBP = ["", "BPC", "TIC"]
+    ranges = list(zip([id_range, aq_range, bq_range, cq_range, dq_range], ['IDR', 'R1', 'R2', 'R3', 'R4']))
+    legendlab = ["Scans Relative Frequency(%)", "PSMs Relative Frequency(%)"]
+    lgcolor = ["#0000FF", "#FF0000"]
+    gs1 = gridspec.GridSpec(12, 1)
+    gs1.update(left=0.05, right=0.52, hspace=0.0, top=0.95, bottom=0.4)
+    ax1 = fig.add_subplot(gs1[2:8])
+    ax11 = fig.add_subplot((gs1[8:12]), sharex=ax1)
+    ax12 = fig.add_subplot((gs1[1:2]), sharex=ax1)
+    ax13 = fig.add_subplot((gs1[0:1]), sharex=ax1)
+    gs2 = gridspec.GridSpec(5, 1)
+    gs2.update(left=0.58, right=0.98, top=0.98, bottom=0.08, hspace=0)
+    ax21 = fig.add_subplot(gs2[0])
+    ax21.xaxis.set_visible(False)
+    ax22 = fig.add_subplot((gs2[1]), sharex=ax21)
+    ax22.xaxis.set_visible(False)
+    ax23 = fig.add_subplot((gs2[2]), sharey=ax22, sharex=ax22)
+    ax23.xaxis.set_visible(False)
+    ax24 = fig.add_subplot((gs2[3]), sharey=ax22, sharex=ax22)
+    ax24.xaxis.set_visible(False)
+    ax25 = fig.add_subplot((gs2[4]), sharey=ax22, sharex=ax22)
+    ax1.set_xlim(0, maxrt)
+    ax1.xaxis.set_visible(False)
+    ax12.xaxis.set_visible(False)
+    ax12.yaxis.set_visible(False)
+    ax13.xaxis.set_visible(False)
+    ax13.yaxis.set_visible(False)
+    r = [ax21, ax22, ax23, ax24, ax25]
+    gs22 = gridspec.GridSpec(1, 1)
+    gs22.update(left=0.06, right=0.52, top=0.32, bottom=0.05)
+    ax3 = fig.add_subplot(gs22[0])
+    dlist = [pd.DataFrame(a.loc[x][t].agg(['max', 'min', 'median', 'mean', 'std', 'count']).round(2)).rename(columns={t: (y + " " + b)}) for x, y in ranges for a, b in iter(datah)]
+    ht = dlist[0].join(dlist[1:])
+    ax3.axis("off")
+    ht.index = ['Maximun', 'Minimum', 'Median', 'Mean', 'std', 'Count']
+    tablevalues = ht.values.tolist()
+    tablevalues = [[f"{x:.2E}" if x >= 10000.0 else str(np.around(x, 2)) for x in i] for i in tablevalues]
+    t1 = ax3.table(cellText=tablevalues, colLabels=(ht.columns), rowLabels=(ht.index), cellLoc="center",
+      bbox=[0.0, 0, 1, 1],
+      colColours=cc,
+      rowColours=['#d8dcd6', '#d8dcd6', '#d8dcd6', '#d8dcd6', '#d8dcd6', '#d8dcd6'])
+    for (row, col), cell in t1.get_celld().items():
+        if row == 0 or col == -1:
+            cell.set_text_props(fontproperties=FontProperties(weight="bold"))
+
+    for num, co in enumerate(data):
+        ax1.scatter(x=(co[0]["Retention time"].values), y=(co[0][t].values), c=(dmap[num]), label=(co[1]), s=0.1, alpha=1, zorder=2, rasterized=True)
+
+    l6 = ax11.plot((mzmla["Retention time"].values), (mzmla[TBP[l]].values), c="k", label=("MS" + str(l) + " " + TBP[l]), alpha=1, linewidth=0.2, zorder=2)
+    ax1.ticklabel_format(axis="y", style="sci", scilimits=(0, 4))
+    ax1.yaxis.set_offset_position("left")
+    ax11.yaxis.set_offset_position("left")
+    for i in quantl:
+        ax1.axvline((i[0]), 0, 1, linestyle=(i[1]), c=(i[2]), alpha=1, label=(i[3]), zorder=1)
+        ax11.axvline((i[0]), 0, 1, linestyle=(i[1]), c=(i[2]), alpha=1, label=(i[3]), zorder=1)
+
+    for i in rangesl:
+        ax12.axvspan((i[0][0]), (i[0][1]), ymin=(i[1]), ymax=(i[2]), facecolor=(i[3]), edgecolor="grey")
+        ax12.text(((i[0][0] + i[0][1]) / 2), (i[4]), (i[5]), horizontalalignment="center", verticalalignment="center")
+
+    lxaxis = []
+    percenmax = []
+    for b, a in enumerate(ranges):
+        arrlist = [
+         "", ""]
+        for num, co in enumerate(datah):
+            co0 = co[0].loc[a[0]]
+            co1 = co[1]
+            co1 = a[1] + " " + co1
+            arrlist[num] = co0.groupby(t)["Scan Number"].agg("count").reset_index()
+            r[b].bar((arrlist[num][t]), (arrlist[num]["Scan Number"]), color=(c[num][b]), alpha=1, edgecolor=(ec[b]), label=co1)
+            r[b].axvline((min(arrlist[0][t])), 0, 0, c=(dmap[num]), alpha=1, zorder=1, label=(legendlab[num]))
+
+        lxaxis += [min(arrlist[0][t]), max(arrlist[0][t])]
+        if l == 2:
+            if p == 1:
+                percen = arrlist[0].merge((arrlist[1]), how="left", left_on=t, right_on=t).fillna(value=0)
+            else:
+                percen = arrlist[0].fillna(value=0)
+            percenmax.append(percen.values.max())
+            if b == 0:
+                arrmax = max(percenmax)
+            else:
+                arrmax = max(percenmax[1:])
+            for i, v in enumerate(zip(percen[t], *[percen[col] / percen[col].sum() * 100 for col in percen.columns[1:]])):
+                if v[1] != 0:
+                    if len(v) == 3:
+                        r[b].text((v[0]), (int(percen.iloc[(i, 1)]) + arrmax * 0.1), (str(round(v[1], 1))), color=(lgcolor[0]),
+                          horizontalalignment="center",
+                          verticalalignment="bottom",
+                          size=8,
+                          weight="bold",
+                          rotation=0)
+                        r[b].text((v[0]), (int(percen.iloc[(i, 1)]) + arrmax * 0.01), (str(round(v[2], 1))), color=(lgcolor[1]),
+                          horizontalalignment="center",
+                          verticalalignment="bottom",
+                          size=8,
+                          weight="bold",
+                          rotation=0)
+                    else:
+                        r[b].text((v[0]), (int(percen.iloc[(i, 1)]) + arrmax * 0.01), (str(round(v[1], 1))), color=(lgcolor[0]),
+                          horizontalalignment="center",
+                          verticalalignment="bottom",
+                          size=8,
+                          weight="bold")
+
+    ax1.ticklabel_format(axis="y", style="sci", scilimits=(0, 4), useMathText=True)
+    ax11.ticklabel_format(axis="y", style="sci", scilimits=(0, 4), useMathText=True)
+    Labeloffset(ax1, label=t, axis="y")
+    Labeloffset(ax11, label=(l6[0].get_label()), axis="y")
+    Labeloffset(ax25, label=t, axis="x")
+    ymin, ymax = ax21.get_ylim()
+    ax21.set_ylim(0, ymax * 1.2)
+    ymin2, ymax2 = ax22.get_ylim()
+    ax22.set_ylim(0, ymax2 * 1.2)
+    if max(lxaxis) > 35:
+        lxaxis = list(range(int(min(lxaxis)), int(max(lxaxis)) + 1, 2))
     else:
-        c = [
-         [
-          '#ffffcc', '#c2ccff', '#ffa756', '#b1d27b', '#d9544d'], ['#cccc99', '#8f99cc', '#cc7423', '#7e9f48', '#a6211a']]
-        ec = ['#80804d', '#434d80', '#802800', '#325300', '#5a0000']
-        TBP = ["", "BPC", "TIC"]
-        ranges = list(zip([id_range, aq_range, bq_range, cq_range, dq_range], ['IDR', 'R1', 'R2', 'R3', 'R4']))
-        legendlab = ["Scans Relative Frequency(%)", "PSMs Relative Frequency(%)"]
-        lgcolor = ["#0000FF", "#FF0000"]
-        gs1 = gridspec.GridSpec(12, 1)
-        gs1.update(left=0.05, right=0.52, hspace=0.0, top=0.95, bottom=0.4)
-        ax1 = fig.add_subplot(gs1[2:8])
-        ax11 = fig.add_subplot((gs1[8:12]), sharex=ax1)
-        ax12 = fig.add_subplot((gs1[1:2]), sharex=ax1)
-        ax13 = fig.add_subplot((gs1[0:1]), sharex=ax1)
-        gs2 = gridspec.GridSpec(5, 1)
-        gs2.update(left=0.58, right=0.98, top=0.98, bottom=0.08, hspace=0)
-        ax21 = fig.add_subplot(gs2[0])
-        ax21.xaxis.set_visible(False)
-        ax22 = fig.add_subplot((gs2[1]), sharex=ax21)
-        ax22.xaxis.set_visible(False)
-        ax23 = fig.add_subplot((gs2[2]), sharey=ax22, sharex=ax22)
-        ax23.xaxis.set_visible(False)
-        ax24 = fig.add_subplot((gs2[3]), sharey=ax22, sharex=ax22)
-        ax24.xaxis.set_visible(False)
-        ax25 = fig.add_subplot((gs2[4]), sharey=ax22, sharex=ax22)
-        ax1.set_xlim(0, maxrt)
-        ax1.xaxis.set_visible(False)
-        ax12.xaxis.set_visible(False)
-        ax12.yaxis.set_visible(False)
-        ax13.xaxis.set_visible(False)
-        ax13.yaxis.set_visible(False)
-        r = [ax21, ax22, ax23, ax24, ax25]
-        gs22 = gridspec.GridSpec(1, 1)
-        gs22.update(left=0.06, right=0.52, top=0.32, bottom=0.05)
-        ax3 = fig.add_subplot(gs22[0])
-        dlist = [pd.DataFrame(a.loc[x][t].agg(['max', 'min', 'median', 'mean', 'std', 'count']).round(2)).rename(columns={t: (y + " " + b)}) for x, y in ranges for a, b in iter(datah)]
-        ht = dlist[0].join(dlist[1:])
-        ax3.axis("off")
-        ht.index = ['Maximun', 'Minimum', 'Median', 'Mean', 'std', 'Count']
-        tablevalues = ht.values.tolist()
-        tablevalues = [[f"{x:.2E}" if x >= 10000.0 else str(np.around(x, 2)) for x in i] for i in tablevalues]
-        t1 = ax3.table(cellText=tablevalues, colLabels=(ht.columns), rowLabels=(ht.index), cellLoc="center",
-          bbox=[0.0, 0, 1, 1],
-          colColours=cc,
-          rowColours=['#d8dcd6', '#d8dcd6', '#d8dcd6', '#d8dcd6', '#d8dcd6', '#d8dcd6'])
-        for (row, col), cell in t1.get_celld().items():
-            if row == 0 or col == -1:
-                cell.set_text_props(fontproperties=FontProperties(weight="bold"))
-
-        for num, co in enumerate(data):
-            ax1.scatter(x=(co[0]["Retention time"].values), y=(co[0][t].values), c=(dmap[num]), label=(co[1]), s=0.1, alpha=1, zorder=2, rasterized=True)
-
-        l6 = ax11.plot((mzmla["Retention time"].values), (mzmla[TBP[l]].values), c="k", label=("MS" + str(l) + " " + TBP[l]), alpha=1, linewidth=0.2, zorder=2)
-        ax1.ticklabel_format(axis="y", style="sci", scilimits=(0, 4))
-        ax1.yaxis.set_offset_position("left")
-        ax11.yaxis.set_offset_position("left")
-        for i in quantl:
-            ax1.axvline((i[0]), 0, 1, linestyle=(i[1]), c=(i[2]), alpha=1, label=(i[3]), zorder=1)
-            ax11.axvline((i[0]), 0, 1, linestyle=(i[1]), c=(i[2]), alpha=1, label=(i[3]), zorder=1)
-
-        for i in rangesl:
-            ax12.axvspan((i[0][0]), (i[0][1]), ymin=(i[1]), ymax=(i[2]), facecolor=(i[3]), edgecolor="grey")
-            ax12.text(((i[0][0] + i[0][1]) / 2), (i[4]), (i[5]), horizontalalignment="center", verticalalignment="center")
-
-        lxaxis = []
-        percenmax = []
-        for b, a in enumerate(ranges):
-            arrlist = [
-             "", ""]
-            for num, co in enumerate(datah):
-                co0 = co[0].loc[a[0]]
-                co1 = co[1]
-                co1 = a[1] + " " + co1
-                arrlist[num] = co0.groupby(t)["Scan Number"].agg("count").reset_index()
-                r[b].bar((arrlist[num][t]), (arrlist[num]["Scan Number"]), color=(c[num][b]), alpha=1, edgecolor=(ec[b]), label=co1)
-                r[b].axvline((min(arrlist[0][t])), 0, 0, c=(dmap[num]), alpha=1, zorder=1, label=(legendlab[num]))
-
-            lxaxis += [min(arrlist[0][t]), max(arrlist[0][t])]
-            if l == 2:
-                if p == 1:
-                    percen = arrlist[0].merge((arrlist[1]), how="left", left_on=t, right_on=t).fillna(value=0)
-                else:
-                    percen = arrlist[0].fillna(value=0)
-                percenmax.append(percen.values.max())
-                if b == 0:
-                    arrmax = max(percenmax)
-                else:
-                    arrmax = max(percenmax[1:])
-                for i, v in enumerate(zip(percen[t], *[percen[col] / percen[col].sum() * 100 for col in percen.columns[1:]])):
-                    if v[1] != 0:
-                        if len(v) == 3:
-                            r[b].text((v[0]), (int(percen.iloc[(i, 1)]) + arrmax * 0.1), (str(round(v[1], 1))), color=(lgcolor[0]),
-                              horizontalalignment="center",
-                              verticalalignment="bottom",
-                              size=8,
-                              weight="bold",
-                              rotation=0)
-                            r[b].text((v[0]), (int(percen.iloc[(i, 1)]) + arrmax * 0.01), (str(round(v[2], 1))), color=(lgcolor[1]),
-                              horizontalalignment="center",
-                              verticalalignment="bottom",
-                              size=8,
-                              weight="bold",
-                              rotation=0)
-                        else:
-                            r[b].text((v[0]), (int(percen.iloc[(i, 1)]) + arrmax * 0.01), (str(round(v[1], 1))), color=(lgcolor[0]),
-                              horizontalalignment="center",
-                              verticalalignment="bottom",
-                              size=8,
-                              weight="bold")
-
-        ax1.ticklabel_format(axis="y", style="sci", scilimits=(0, 4), useMathText=True)
-        ax11.ticklabel_format(axis="y", style="sci", scilimits=(0, 4), useMathText=True)
-        Labeloffset(ax1, label=t, axis="y")
-        Labeloffset(ax11, label=(l6[0].get_label()), axis="y")
-        Labeloffset(ax25, label=t, axis="x")
-        ymin, ymax = ax21.get_ylim()
-        ax21.set_ylim(0, ymax * 1.2)
-        ymin2, ymax2 = ax22.get_ylim()
-        ax22.set_ylim(0, ymax2 * 1.2)
-        if max(lxaxis) > 35:
-            lxaxis = list(range(int(min(lxaxis)), int(max(lxaxis)) + 1, 2))
-        else:
-            lxaxis = list(range(int(min(lxaxis)), int(max(lxaxis)) + 1))
-        ax24.set_xticks(lxaxis)
-        ax13.set_title((t + " (MS" + str(l) + ")"), fontsize="20", y=1.1)
-        ax11.set_xlabel("RT", fontweight="bold")
-        han, leg = ax1.get_legend_handles_labels()
-        han = ax13.legend(han, leg, ncol=(len(han)), loc="center")
-        if p == 1:
-            han.legend_handles[5].set_markersize(11)
-            han.legend_handles[6].set_markersize(11)
-        else:
-            han.legend_handles[5].set_markersize(11)
-        for num, i in enumerate(r):
-            i.set_ylabel("Frequency", fontsize="10", fontweight="bold")
-            i.yaxis.set_major_locator(MaxNLocator(prune="lower"))
-            i.legend(fontsize=8, ncol=2)
+        lxaxis = list(range(int(min(lxaxis)), int(max(lxaxis)) + 1))
+    ax24.set_xticks(lxaxis)
+    ax13.set_title((t + " (MS" + str(l) + ")"), fontsize="20", y=1.1)
+    ax11.set_xlabel("RT", fontweight="bold")
+    han, leg = ax1.get_legend_handles_labels()
+    han = ax13.legend(han, leg, ncol=(len(han)), loc="center")
+    if p == 1:
+        han.legend_handles[5].set_markersize(11)
+        han.legend_handles[6].set_markersize(11)
+    else:
+        han.legend_handles[5].set_markersize(11)
+    for num, i in enumerate(r):
+        i.set_ylabel("Frequency", fontsize="10", fontweight="bold")
+        i.yaxis.set_major_locator(MaxNLocator(prune="lower"))
+        i.legend(fontsize=8, ncol=2)
 
     pp.savefig(dpi=300)
     plt.close(fig)
