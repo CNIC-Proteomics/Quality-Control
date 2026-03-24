@@ -68,7 +68,7 @@ def pre_proccess_Data(filein1, filein2, label, isoname, start):
     mzml2 = mzml1.loc[mzml["Scan header"] == lsc]
     mzml["TopN"] = (-mzml2["Scan Number"].diff(periods=(-1)) - 1 - lsc).fillna(ls - mzml2["Scan Number"].max())
     mzml["Intensity jumps"] = mzml1["TIC"] / mzml1["TIC"].shift(1)
-    mzml = mzml.merge((pd.read_csv(filein2, "\t")), left_on="Scan Number", right_on="Scan", how="left")
+    mzml = mzml.merge((pd.read_csv(filein2, sep="\t")), left_on="Scan Number", right_on="Scan", how="left")
     mzml = mzml[columns]
     mzml = mzml.astype({'Scan': '"float32"', 'Matched fragment ions': '"float32"', 'Total possible number of matched theoretical fragment ions': '"float32"',
      'Missed cleavages': '"float32"', 'Hyperscore': '"float32"', 'Delta Mass [ppm]': '"float32"'})
