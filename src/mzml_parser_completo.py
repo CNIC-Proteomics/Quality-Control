@@ -70,16 +70,15 @@ def get_spectrum_values(elt, label, isotag, isocorrm, nl1, nl2, array):
                 if spec["mslevel"] == 2:
                     if elem.attrib["name"] == "charge state":
                         spec["Charge"] = int(elem.attrib["value"])
-                if elem.tag == "{http://psi.hupo.org/ms/mzml}precursor":
-                    spec["psn"] = int(elem.attrib["spectrumRef"].split("scan=")[1].split(" ")[0])
-            if elem.tag == "{http://psi.hupo.org/ms/mzml}binaryDataArray":
-                val = [elem[0].attrib["name"], elem[1].attrib["name"], elem[2].attrib["name"]]
-                ctype = ["zlib compression" if "zlib compression" in val else ""][0]
-                dtypea = [type_array[k] for k in val if k in type_array][0]
-                vname = [class_array[k] for k in val if k in class_array][0]
-                spec[vname] = elem[3].text
-                spec[vname] = array_decoder(spec[vname], ctype, dtypea)
-
+        if elem.tag == "{http://psi.hupo.org/ms/mzml}precursor":
+            spec["psn"] = int(elem.attrib["spectrumRef"].split("scan=")[1].split(" ")[0])
+        if elem.tag == "{http://psi.hupo.org/ms/mzml}binaryDataArray":
+            val = [elem[0].attrib["name"], elem[1].attrib["name"], elem[2].attrib["name"]]
+            ctype = ["zlib compression" if "zlib compression" in val else ""][0]
+            dtypea = [type_array[k] for k in val if k in type_array][0]
+            vname = [class_array[k] for k in val if k in class_array][0]
+            spec[vname] = elem[3].text
+            spec[vname] = array_decoder(spec[vname], ctype, dtypea)
     if spec["mslevel"] == 2:
         if label != 4:
             for i, a in enumerate(iqc.get_quant(spec["mz"], spec["i"], label, isotag, isocorrm)):
