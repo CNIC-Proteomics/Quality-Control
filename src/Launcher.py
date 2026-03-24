@@ -117,7 +117,11 @@ def main(args):
         timer = divmod(end - start, 60)
         logging.info("Finished ThermoRawFileParser in " + str(timer[0]) + " Minutes and " + str(round(timer[1], 4)) + " Seconds")
     if log[1][1] == 1:
-        subprocess.run((["java", "-jar", msfraggerpath, args.params] + fileslist[1]), shell=True)
+        try:
+            subprocess.run((["java", "-jar", msfraggerpath, args.params] + fileslist[1]), check=True, shell=True)
+        except:
+            logging.error("Error running MSFragger")
+            sys.exit()
     if log[1][2] == 1:
         with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
             executor.map(prms.Pratio, fileslist[2], repeat(decoy_prefix), repeat(deltaMassThreshold), repeat(FDRlvl), repeat(JumpsAreas))
