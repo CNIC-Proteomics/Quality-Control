@@ -70,8 +70,8 @@ def pre_proccess_Data(filein1, filein2, label, isoname, start):
     mzml["Intensity jumps"] = mzml1["TIC"] / mzml1["TIC"].shift(1)
     mzml = mzml.merge((pd.read_csv(filein2, sep="\t")), left_on="Scan Number", right_on="Scan", how="left")
     mzml = mzml[columns]
-    mzml = mzml.astype({'Scan': '"float32"', 'Matched fragment ions': '"float32"', 'Total possible number of matched theoretical fragment ions': '"float32"',
-     'Missed cleavages': '"float32"', 'Hyperscore': '"float32"', 'Delta Mass [ppm]': '"float32"'})
+    mzml = mzml.astype({'Scan': 'float32', 'Matched fragment ions': 'float32', 'Total possible number of matched theoretical fragment ions': 'float32',
+     'Missed cleavages': 'float32', 'Hyperscore': 'float32', 'Delta Mass [ppm]': 'float32'})
     mzml["ID efficiency [%]"] = (mzml1["Scan Number"] - 1).astype("float32")
     mzml["ID efficiency [%]"] = mzml["ID efficiency [%]"].replace(to_replace=(np.nan), method="ffill").astype("float32")
     mzml["ID efficiency [%]"] = (mzml.groupby("ID efficiency [%]")["Modified Sequence"].count() / (mzml.groupby("ID efficiency [%]")["Scan Number"].count() - 1) * 100).astype("float32")
