@@ -225,7 +225,7 @@ def hist_report(mzml, l, p, t, pp):
         for num, co in enumerate(data):
             ax1.scatter(x=(co[0]["Retention time"].values), y=(co[0][t].values), c=(dmap[num]), label=(co[1]), s=0.1, alpha=1, zorder=2, rasterized=True)
 
-        l6 = ax11.plot((mzmla["Retention time"].values), (mzmla[TBP[l]].values), c="K", label=("MS" + str(l) + " " + TBP[l]), alpha=1, linewidth=0.2, zorder=2)
+        l6 = ax11.plot((mzmla["Retention time"].values), (mzmla[TBP[l]].values), c="k", label=("MS" + str(l) + " " + TBP[l]), alpha=1, linewidth=0.2, zorder=2)
         for i in quantl:
             ax1.axvline((i[0]), 0, 1, linestyle=(i[1]), c=(i[2]), alpha=1, label=(i[3]), zorder=1)
             ax11.axvline((i[0]), 0, 1, linestyle=(i[1]), c=(i[2]), alpha=1, label=(i[3]), zorder=1)
@@ -393,7 +393,7 @@ def bar_report(mzml, l, p, t, pp):
         for num, co in enumerate(data):
             ax1.scatter(x=(co[0]["Retention time"].values), y=(co[0][t].values), c=(dmap[num]), label=(co[1]), s=0.1, alpha=1, zorder=2, rasterized=True)
 
-        l6 = ax11.plot((mzmla["Retention time"].values), (mzmla[TBP[l]].values), c="K", label=("MS" + str(l) + " " + TBP[l]), alpha=1, linewidth=0.2, zorder=2)
+        l6 = ax11.plot((mzmla["Retention time"].values), (mzmla[TBP[l]].values), c="k", label=("MS" + str(l) + " " + TBP[l]), alpha=1, linewidth=0.2, zorder=2)
         ax1.ticklabel_format(axis="y", style="sci", scilimits=(0, 4))
         ax1.yaxis.set_offset_position("left")
         ax11.yaxis.set_offset_position("left")
@@ -513,7 +513,7 @@ def main_report(mzml, pp, label):
      "", ""]
     for b, i in enumerate(TBP):
         mzml1 = mzml.loc[mzml["ms level"] == i[1]]
-        llist[b] = lir[b].plot((mzml1["Retention time"].values), (mzml1[i[0]].values), c="K", label=("MS" + str(b + 1) + " " + i[0]), alpha=1, linewidth=0.2, zorder=2)
+        llist[b] = lir[b].plot((mzml1["Retention time"].values), (mzml1[i[0]].values), c="k", label=("MS" + str(b + 1) + " " + i[0]), alpha=1, linewidth=0.2, zorder=2)
 
     for i in quantl:
         ax1.axvline((i[0]), 0, 1, linestyle=(i[1]), c=(i[2]), alpha=1, label=(i[3]), zorder=1)
@@ -646,7 +646,7 @@ def sampling_report(mzml, pp):
     for b, i in enumerate(TBP):
         llist[b] = lir[b].scatter(x=(mzml1["Retention time"].values), y=(mzml1[i].values), c=(dmap[0][b]), label=(dmap[1][b]), alpha=1, zorder=2, rasterized=True, s=0.1)
 
-    ax15.plot((mzml2["Retention time"].values), (mzml2["Intensity"].values), c="K", label="MS2 TIC", alpha=1, linewidth=0.2, zorder=2)
+    ax15.plot((mzml2["Retention time"].values), (mzml2["Intensity"].values), c="k", label="MS2 TIC", alpha=1, linewidth=0.2, zorder=2)
     for i in quantl:
         ax1.axvline((i[0]), 0, 1, linestyle=(i[1]), c=(i[2]), alpha=1, label=(i[3]), zorder=1)
         ax11.axvline((i[0]), 0, 1, linestyle=(i[1]), c=(i[2]), alpha=1, label=(i[3]), zorder=1)
