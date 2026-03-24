@@ -154,7 +154,7 @@ def hist_report(mzml, l, p, t, pp):
         dmap = ["#0000FF"]
     elif l == 2 and p == 1:
         mzml1 = mzmla[mzmla["Scan"].isna()]
-        mzml2 = mzmla.dropna(0, subset=["Scan"])
+        mzml2 = mzmla.dropna(axis=0, subset=["Scan"])
         data = list(zip([mzml1, mzml2], ["Scans", "PSMs"]))
         datah = list(zip([mzmla, mzml2], ["Scans", "PSMs"]))
         cc = ['#ffffcc', '#cccc99', '#c2ccff', '#8f99cc', '#ffa756', '#cc7423', '#b1d27b',
@@ -325,7 +325,7 @@ def bar_report(mzml, l, p, t, pp):
             dmap = ["#0000FF"]
         if l == 2 and p == 1:
             mzml1 = mzmla[mzmla["Scan"].isna()]
-            mzml2 = mzmla.dropna(0, subset=["Scan"])
+            mzml2 = mzmla.dropna(axis=0, subset=["Scan"])
             data = list(zip([mzml1, mzml2], ["Scans", "PSMs"]))
             datah = list(zip([mzmla, mzml2], ["Scans", "PSMs"]))
             cc = ['#ffffcc', '#cccc99', '#c2ccff', '#8f99cc', '#ffa756', '#cc7423',
