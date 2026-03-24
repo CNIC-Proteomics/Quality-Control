@@ -4,25 +4,22 @@ Created on Tue Sep 17 17:06:24 2019
 
 @author: rmagni
 """
-import multiprocessing
+import multiprocessing, logging, argparse, os, sys, glob, concurrent.futures, subprocess, time
+import numpy as np
 from pathlib import Path
 from itertools import repeat
-import argparse, os, sys, glob, numpy as np, concurrent.futures, iso_quan_and_correction as iqc, mzml_parser_completo as mpc, pratiomsfragger as prms, qc_report as qc, subprocess, time
-np.warnings.filterwarnings("ignore")
+# Custom modules
+import iso_quan_and_correction as iqc
+import mzml_parser_completo as mpc
+import pratiomsfragger as prms
+import qc_report as qc
+# Ignore numpy warnings
+# np.warnings.filterwarnings("ignore")
 
 def run_mzml_parse(filesinraw, folderoutraw, ThermoRawFileParserpath):
     subprocess.run([ThermoRawFileParserpath, filesinraw, folderoutraw, '-f=2', '-m=0'], shell=True)
 
-
-def launcher_task(inpathraw, log):
-    if inpathraw.endswith(".raw") == True:
-        filesin = [inpathraw]
-        folders = os.path.join(os.path.dirname(inpathraw), "Data")
-    else:
-        filesin = glob.glob(os.path.join(inpathraw, "*.raw"))
-        folders = os.path.join(inpathraw, "Data")
-    if not os.path.exists(folders):
-        os.makedirs(folders)
+def launcher_task(filesin, folders, inpathraw, log):
     filesmzML = [os.path.join(os.path.dirname(i), folders, os.path.basename(i).replace(".raw", ".mzML")) for i in filesin]
     filesresult = [i.replace(".mzML", ".result.tsv") for i in filesmzML]
     filesfilteredresult = [i.replace(".mzML", ".filtered.result.tsv") for i in filesmzML]
@@ -57,16 +54,10 @@ def launcher_task(inpathraw, log):
 
     return (fileslist, log, folders)
 
-
-if __name__ == "__main__":
+def main(args):
+    logging.info("STARTING QUALITY CONTROL WORKFLOW")
     multiprocessing.freeze_support()
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-r", "--raw", help="raw file or raw folder", type=Path)
-    parser.add_argument("-p", "--params", help="params file", type=Path)
-    args = parser.parse_args()
-    inpathraw = str(args.raw)
-    paramsfile = str(args.params)
-    with open(paramsfile, "r") as f:
+    with open(args.params, "r") as f:
         x = f.read().splitlines()
     x = [a.replace(" ", "") for a in x]
     x = [a.replace("\t", "") for a in x]
@@ -91,26 +82,28 @@ if __name__ == "__main__":
     isocorrm = iqc.correcmatrix(isotopic_Distribution_table, isobaric_labeling_isotopic_correction)
     isotag, isoname = iqc.isobaric_labelling(isobaric_labeling)
     msfraggerpath = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), "msfragger", "MSFragger.jar")
+    if not os.path.isfile(msfraggerpath):
+        logging.error("MSFragger not found in " + str(msfraggerpath))
+        sys.exit()
     ThermoRawFileParserpath = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), "ThermoRawFileParser", "ThermoRawFileParser.exe")
+    if not os.path.isfile(ThermoRawFileParserpath):
+        logging.error("ThermoRawFileParserpath not found in " + str(ThermoRawFileParserpath))
+        sys.exit()
     log = np.array([[raw_parser, msfragger, pratio, mzml_parser, QC_report], [raw_parser, msfragger, pratio, mzml_parser, QC_report]])
-    fileslist, log, folders = launcher_task(inpathraw, log)
-    stxt = "STARTING QUALITY CONTROL WORKFLOW"
-    print("\n" + "##".center(80, "#") + stxt.center(80, " ") + "##".center(80, "#"))
+    fileslist, log, folders = launcher_task(args.filesin, args.folders, args.raw, log)
     start = time.time()
     if log[1][0] == 1:
         filesinraw = ["-i=" + file for file in fileslist[0]]
         folderoutraw = "-o=" + folders
-        stxt = "Starting ThermoRawFileParser"
-        print("\n" + "**".center(80, "*") + stxt.center(80, " ") + "**".center(80, "*"))
+        logging.info("Starting ThermoRawFileParser")
         start = time.time()
         with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
             executor.map(run_mzml_parse, filesinraw, repeat(folderoutraw), repeat(ThermoRawFileParserpath))
         end = time.time()
         timer = divmod(end - start, 60)
-        etxt1 = "Finished ThermoRawFileParser in " + str(timer[0]) + " Minutes and " + str(round(timer[1], 4)) + " Seconds"
-        print("\n" + "||".center(80, "|") + etxt1.center(80, " ") + "||".center(80, "|"))
+        logging.info("Finished ThermoRawFileParser in " + str(timer[0]) + " Minutes and " + str(round(timer[1], 4)) + " Seconds")
     if log[1][1] == 1:
-        subprocess.run((["java", "-jar", msfraggerpath, paramsfile] + fileslist[1]), shell=True)
+        subprocess.run((["java", "-jar", msfraggerpath, args.params] + fileslist[1]), shell=True)
     if log[1][2] == 1:
         with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
             executor.map(prms.Pratio, fileslist[2], repeat(decoy_prefix), repeat(deltaMassThreshold), repeat(FDRlvl), repeat(JumpsAreas))
@@ -122,5 +115,47 @@ if __name__ == "__main__":
             executor.map(qc.create_report, fileslist[5], fileslist[4], repeat(isobaric_labeling), repeat(isoname))
     end = time.time()
     timer = divmod(end - start, 60)
-    etxt1 = "FINISHED QUALITY CONTROL WORKFLOW IN " + str(timer[0]) + " MINUTES AND " + str(round(timer[1], 4)) + " SECONDS"
-    print("\n" + "##".center(80, "#") + etxt1.center(80, " ") + "##".center(80, "#"))
+    logging.info("FINISHED QUALITY CONTROL WORKFLOW IN " + str(timer[0]) + " MINUTES AND " + str(round(timer[1], 4)) + " SECONDS")
+    return
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description='Quality-Control',
+        epilog='''
+        Example:
+            python Quality-Control.py -r raw -p params
+
+        ''')
+    multiprocessing.freeze_support()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-r", "--raw",    required=True, help="raw file or raw folder", type=Path)
+    parser.add_argument("-p", "--params", required=True, help="parameters file",        type=Path)
+    args = parser.parse_args()
+    
+    args.raw = str(args.raw)
+    args.params = str(args.params)
+    if args.raw.endswith(".raw") == True:
+        filesin = [args.raw]
+        folders = os.path.join(os.path.dirname(args.raw), "Data")
+    else:
+        filesin = glob.glob(os.path.join(args.raw, "*.raw"))
+        folders = os.path.join(args.raw, "Data")
+    if not os.path.exists(folders):
+        os.makedirs(folders)
+    args.filesin = filesin
+    args.folders = folders
+    
+    log_file = os.path.join(args.folders + '/Quality-Control.log')
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s - %(levelname)s - %(message)s',
+                        datefmt='%m/%d/%Y %I:%M:%S %p',
+                        handlers=[logging.FileHandler(log_file),
+                                  logging.StreamHandler()])
+    
+    if len(args.filesin) < 1:
+        logging.warning("No RAW files found in " + str(args.raw))
+        sys.exit()
+    
+    logging.info('start script: '+"{0}".format(" ".join([x for x in sys.argv])))
+    main(args)
+    logging.info('end script')

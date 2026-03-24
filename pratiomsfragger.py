@@ -4,7 +4,8 @@ Created on Mon May 27 15:33:42 2019
 
 @author: rmagni
 """
-import time, itertools, pandas as pd, numpy as np, os
+import time, itertools, pandas as pd, numpy as np, os, logging
+
 h_mass = 1.00727647
 
 def Jumps(df, JumpsAreas):
@@ -63,7 +64,7 @@ def FdrXc(df, FDRlvl):
 def Pratio(filein, decoy_prefix, deltaMassThreshold, FDRlvl, JumpsAreas):
     fileout = filein.replace(".result.tsv", ".filtered.result.tsv")
     stxt = "Processing " + os.path.basename(filein)
-    print("\n" + "*".center(80, "*") + stxt.center(80, " ") + "*".center(80, "*"))
+    logging.info("\n" + "*".center(80, "*") + stxt.center(80, " ") + "*".center(80, "*"))
     start = time.time()
     df = pd.read_csv(filein, sep="\t")
     df.columns = ['Scan',
@@ -100,4 +101,4 @@ def Pratio(filein, decoy_prefix, deltaMassThreshold, FDRlvl, JumpsAreas):
     timer = divmod(end - start, 60)
     etxt = os.path.basename(fileout)
     etxt1 = "Generated in " + str(timer[0]) + " Minutes and " + str(round(timer[1], 4)) + " Seconds"
-    print("\n" + "||".center(80, "|") + etxt.center(80, " ") + etxt1.center(80, " ") + "||".center(80, "|"))
+    logging.info("\n" + "||".center(80, "|") + etxt.center(80, " ") + etxt1.center(80, " ") + "||".center(80, "|"))

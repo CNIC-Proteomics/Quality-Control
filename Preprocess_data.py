@@ -4,7 +4,7 @@ Created on Tue Sep 17 17:05:22 2019
 
 @author: rmagni
 """
-import pandas as pd, numpy as np, time, os
+import pandas as pd, numpy as np, time, os, logging
 
 def redundancy(mzml):
     a = pd.DataFrame(mzml.groupby(["Modified Sequence", "Charge"])["Retention time"].agg(["min", "max", "count"])).reset_index()
@@ -87,5 +87,5 @@ def pre_proccess_Data(filein1, filein2, label, isoname, start):
     timer = divmod(end - start, 60)
     etxt = os.path.basename(fileout)
     etxt1 = "Generated in " + str(timer[0]) + " Minutes and " + str(round(timer[1], 4)) + " Seconds"
-    print("\n" + "||".center(80, "|") + etxt.center(80, " ") + etxt1.center(80, " ") + "||".center(80, "|"))
+    logging.info("\n" + "||".center(80, "|") + etxt.center(80, " ") + etxt1.center(80, " ") + "||".center(80, "|"))
     return mzml

@@ -6,6 +6,7 @@ Created on Tue Jul  9 14:10:45 2019
 """
 from matplotlib.backends.backend_pdf import PdfPages
 import grc, Preprocess_data as prd, time, os
+import logging
 
 def create_pdf(mzml, fileout, label):
     mzml = mzml
@@ -42,7 +43,7 @@ def create_pdf(mzml, fileout, label):
 def create_report(filein1, filein2, label, isoname):
     stxt = "Processing " + os.path.basename(filein1)
     stxt1 = os.path.basename(filein2)
-    print("\n" + "**".center(80, "*") + stxt.center(80, " ") + "and".center(80, " ") + stxt1.center(80, " ") + "**".center(80, "*"))
+    logging.info("\n" + "**".center(80, "*") + stxt.center(80, " ") + "and".center(80, " ") + stxt1.center(80, " ") + "**".center(80, "*"))
     start = time.time()
     fileout = filein1.replace(".mzML.parse.tsv", ".QCreport.pdf")
     mzml = prd.pre_proccess_Data(filein1, filein2, label, isoname, start)
@@ -51,4 +52,4 @@ def create_report(filein1, filein2, label, isoname):
     timer = divmod(end - start, 60)
     etxt = os.path.basename(fileout)
     etxt1 = "Generated in " + str(timer[0]) + " Minutes and " + str(round(timer[1], 4)) + " Seconds"
-    print("\n" + "||".center(80, "|") + etxt.center(80, " ") + etxt1.center(80, " ") + "||".center(80, "|"))
+    logging.info("\n" + "||".center(80, "|") + etxt.center(80, " ") + etxt1.center(80, " ") + "||".center(80, "|"))
