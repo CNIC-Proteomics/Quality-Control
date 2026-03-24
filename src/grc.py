@@ -163,7 +163,7 @@ def hist_report(mzml, l, p, t, pp):
     elif l == 2:
         pass
     if p == 0:
-        mzmla = mzmla.dropna(0, subset=["Scan"])
+        mzmla = mzmla.dropna(axis=0, subset=["Scan"])
         data = list(zip([mzmla], ["PSMs"]))
         datah = list(zip([mzmla], ["PSMs"]))
         cc = ['#ffffcc', '#c2ccff', '#ffa756', '#b1d27b', '#d9544d']
@@ -334,7 +334,7 @@ def bar_report(mzml, l, p, t, pp):
     elif l == 2:
         pass
     if p == 0:
-        mzmla = mzmla.dropna(0, subset=["Scan"])
+        mzmla = mzmla.dropna(axis=0, subset=["Scan"])
         data = list(zip([mzmla], ["PSMs"]))
         datah = list(zip([mzmla], ["PSMs"]))
         cc = ['#ffffcc', '#c2ccff', '#ffa756', '#b1d27b', '#d9544d']
