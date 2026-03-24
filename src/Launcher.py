@@ -124,7 +124,9 @@ def main(args):
             sys.exit()
     if log[1][2] == 1:
         with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
-            executor.map(prms.Pratio, fileslist[2], repeat(decoy_prefix), repeat(deltaMassThreshold), repeat(FDRlvl), repeat(JumpsAreas))
+            futures = executor.map(prms.Pratio, fileslist[2], repeat(decoy_prefix), repeat(deltaMassThreshold), repeat(FDRlvl), repeat(JumpsAreas))
+            for _ in futures:
+                logging.info(_)
     if log[1][3] == 1:
         with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
             executor.map(mpc.parser, fileslist[3], repeat(isobaric_labeling), repeat(isotag), repeat(isoname), repeat(isocorrm), repeat(isobaric_labeling_isotopic_correction), repeat(intensity_noise_level1), repeat(intensity_noise_level2), repeat(mz_intensity_array))

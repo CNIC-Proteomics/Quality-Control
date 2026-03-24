@@ -99,6 +99,4 @@ def Pratio(filein, decoy_prefix, deltaMassThreshold, FDRlvl, JumpsAreas):
     df.to_csv(fileout, sep="\t")
     end = time.time()
     timer = divmod(end - start, 60)
-    etxt = os.path.basename(fileout)
-    etxt1 = "Generated in " + str(timer[0]) + " Minutes and " + str(round(timer[1], 4)) + " Seconds"
-    logging.info("\n" + "||".center(80, "|") + etxt.center(80, " ") + etxt1.center(80, " ") + "||".center(80, "|"))
+    return str(os.path.basename(fileout)) + " generated in " + str(timer[0]) + " Minutes and " + str(round(timer[1], 4)) + " Seconds"
