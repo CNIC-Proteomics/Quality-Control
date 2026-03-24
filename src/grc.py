@@ -618,7 +618,7 @@ def sampling_report(mzml, pp):
     TBP = ["Acummulated redundancy", "Redundancy", "Resolution range"]
     ranges = list(zip([id_range, aq_range, bq_range, cq_range, dq_range], ['IDR', 'R1', 'R2', 'R3', 'R4']))
     mzml2 = mzml[mzml["ms level"] == 2]
-    mzml1 = mzml.dropna(0, subset=["Scan"])
+    mzml1 = mzml.dropna(axis = 0, subset=["Scan"])
     fig = plt.figure(figsize=(16, 9))
     gs1 = gridspec.GridSpec(20, 1)
     gs1.update(left=0.05, right=0.52, hspace=0.0, top=0.95, bottom=0.08)
