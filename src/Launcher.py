@@ -134,7 +134,9 @@ def main(args):
                 logging.info(_)
     if log[1][4] == 1:
         with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
-            executor.map(qc.create_report, fileslist[5], fileslist[4], repeat(isobaric_labeling), repeat(isoname))
+            futures = executor.map(qc.create_report, fileslist[5], fileslist[4], repeat(isobaric_labeling), repeat(isoname))
+            for _ in futures:
+                logging.info(_)
     end = time.time()
     timer = divmod(end - start, 60)
     logging.info("FINISHED QUALITY CONTROL WORKFLOW IN " + str(timer[0]) + " MINUTES AND " + str(round(timer[1], 4)) + " SECONDS")

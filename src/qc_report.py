@@ -41,15 +41,13 @@ def create_pdf(mzml, fileout, label):
 
 
 def create_report(filein1, filein2, label, isoname):
-    stxt = "Processing " + os.path.basename(filein1)
-    stxt1 = os.path.basename(filein2)
-    logging.info("\n" + "**".center(80, "*") + stxt.center(80, " ") + "and".center(80, " ") + stxt1.center(80, " ") + "**".center(80, "*"))
+    # stxt = "Processing " + os.path.basename(filein1)
+    # stxt1 = os.path.basename(filein2)
+    # logging.info("\n" + "**".center(80, "*") + stxt.center(80, " ") + "and".center(80, " ") + stxt1.center(80, " ") + "**".center(80, "*"))
     start = time.time()
     fileout = filein1.replace(".mzML.parse.tsv", ".QCreport.pdf")
     mzml = prd.pre_proccess_Data(filein1, filein2, label, isoname, start)
     create_pdf(mzml, fileout, label)
     end = time.time()
     timer = divmod(end - start, 60)
-    etxt = os.path.basename(fileout)
-    etxt1 = "Generated in " + str(timer[0]) + " Minutes and " + str(round(timer[1], 4)) + " Seconds"
-    logging.info("\n" + "||".center(80, "|") + etxt.center(80, " ") + etxt1.center(80, " ") + "||".center(80, "|"))
+    return str(os.path.basename(fileout)) + "generated in " + str(timer[0]) + " Minutes and " + str(round(timer[1], 4)) + " Seconds"
