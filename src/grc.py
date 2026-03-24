@@ -11,7 +11,11 @@ plt.style.use("seaborn-v0_8-ticks")
 
 class ScalarFormatterForceFormat(ScalarFormatter):
 
-    def _set_format(self, vmin, vmax):
+    def _set_format(self, vmin=None, vmax=None):
+        # fallback for very old matplotlib
+        if vmin is None or vmax is None:
+            vmin, vmax = 0, 1
+
         if vmax < 1000:
             self.format = "%1.1f"
         else:
