@@ -299,10 +299,10 @@ def hist_report(mzml, l, p, t, pp):
         han, leg = ax1.get_legend_handles_labels()
         han = ax13.legend(han, leg, ncol=(len(han)), loc="center")
         if p == 1:
-            han.legend_handles[5].set_markersize([11])
-            han.legend_handles[6].set_markersize([11])
+            han.legend_handles[5].set_markersize(11)
+            han.legend_handles[6].set_markersize(11)
         else:
-            han.legend_handles[5].set_markersize([11])
+            han.legend_handles[5].set_markersize(11)
     for num, i in enumerate(r):
         i.set_ylabel("Counts", fontsize="10", fontweight="bold")
         i.yaxis.set_major_locator(MaxNLocator(prune="lower"))
@@ -470,10 +470,10 @@ def bar_report(mzml, l, p, t, pp):
         han, leg = ax1.get_legend_handles_labels()
         han = ax13.legend(han, leg, ncol=(len(han)), loc="center")
         if p == 1:
-            han.legend_handles[5].set_markersize([11])
-            han.legend_handles[6].set_markersize([11])
+            han.legend_handles[5].set_markersize(11)
+            han.legend_handles[6].set_markersize(11)
         else:
-            han.legend_handles[5].set_markersize([11])
+            han.legend_handles[5].set_markersize(11)
     for num, i in enumerate(r):
         i.set_ylabel("Frequency", fontsize="10", fontweight="bold")
         i.yaxis.set_major_locator(MaxNLocator(prune="lower"))
@@ -692,8 +692,8 @@ def sampling_report(mzml, pp):
     han.append(han1[-1])
     leg.append(leg1[-1])
     han = ax13.legend(han, leg, ncol=(len(han)), loc="center")
-    han.legend_handles[5].set_markersize([11])
-    han.legend_handles[6].set_markersize([11])
+    han.legend_handles[5].set_markersize(11)
+    han.legend_handles[6].set_markersize(11)
     pp.savefig(dpi=300)
     plt.close(fig)
     fig = plt.figure(figsize=(16, 9))
