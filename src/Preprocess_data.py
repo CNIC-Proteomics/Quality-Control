@@ -73,7 +73,7 @@ def pre_proccess_Data(filein1, filein2, label, isoname, start):
     mzml = mzml.astype({'Scan': 'float32', 'Matched fragment ions': 'float32', 'Total possible number of matched theoretical fragment ions': 'float32',
      'Missed cleavages': 'float32', 'Hyperscore': 'float32', 'Delta Mass [ppm]': 'float32'})
     mzml["ID efficiency [%]"] = (mzml1["Scan Number"] - 1).astype("float32")
-    mzml["ID efficiency [%]"] = mzml["ID efficiency [%]"].replace(to_replace=(np.nan), method="ffill").astype("float32")
+    mzml["ID efficiency [%]"] = mzml["ID efficiency [%]"].replace(np.nan, np.nan).ffill().astype("float32")
     mzml["ID efficiency [%]"] = (mzml.groupby("ID efficiency [%]")["Modified Sequence"].count() / (mzml.groupby("ID efficiency [%]")["Scan Number"].count() - 1) * 100).astype("float32")
     mzml["Matched ions [%]"] = (mzml["Matched fragment ions"] / mzml["Total possible number of matched theoretical fragment ions"] * 100).astype("float32")
     mzml["Acummulated redundancy"] = (mzml.groupby(["Modified Sequence", "Charge"])["Scan"].cumcount() + 1).astype("float32")
