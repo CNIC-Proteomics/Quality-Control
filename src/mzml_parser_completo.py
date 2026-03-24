@@ -113,7 +113,7 @@ def parser(filein, label, isotag, isoname, isocorrm, cor, nl1, nl2, array):
     fh = pd.DataFrame(fh, columns=columns)
     if array == 0:
         fh = fh.drop(["m/z array", "Intensity array"], axis=1)
-    fh.to_csv(fileout, "\t")
+    fh.to_csv(fileout, sep="\t")
     end = time.time()
     timer = divmod(end - start, 60)
     return str(os.path.basename(fileout)) + " generated in " + str(timer[0]) + " Minutes and " + str(round(timer[1], 4)) + " Seconds"
