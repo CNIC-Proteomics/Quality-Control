@@ -129,7 +129,9 @@ def main(args):
                 logging.info(_)
     if log[1][3] == 1:
         with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
-            executor.map(mpc.parser, fileslist[3], repeat(isobaric_labeling), repeat(isotag), repeat(isoname), repeat(isocorrm), repeat(isobaric_labeling_isotopic_correction), repeat(intensity_noise_level1), repeat(intensity_noise_level2), repeat(mz_intensity_array))
+            futures =  executor.map(mpc.parser, fileslist[3], repeat(isobaric_labeling), repeat(isotag), repeat(isoname), repeat(isocorrm), repeat(isobaric_labeling_isotopic_correction), repeat(intensity_noise_level1), repeat(intensity_noise_level2), repeat(mz_intensity_array))
+            for _ in futures:
+                logging.info(_)
     if log[1][4] == 1:
         with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
             executor.map(qc.create_report, fileslist[5], fileslist[4], repeat(isobaric_labeling), repeat(isoname))
