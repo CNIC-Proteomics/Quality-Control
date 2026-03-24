@@ -4,7 +4,7 @@ Created on Mon May 27 15:33:42 2019
 
 @author: rmagni
 """
-import time, itertools, pandas as pd, numpy as np, os, logging
+import time, itertools, pandas as pd, numpy as np, os
 
 h_mass = 1.00727647
 
@@ -63,8 +63,8 @@ def FdrXc(df, FDRlvl):
 
 def Pratio(filein, decoy_prefix, deltaMassThreshold, FDRlvl, JumpsAreas):
     fileout = filein.replace(".result.tsv", ".filtered.result.tsv")
-    stxt = "Processing " + os.path.basename(filein)
-    logging.info("\n" + "*".center(80, "*") + stxt.center(80, " ") + "*".center(80, "*"))
+    # stxt = "Processing " + os.path.basename(filein)
+    # logging.info("\n" + "*".center(80, "*") + stxt.center(80, " ") + "*".center(80, "*"))
     start = time.time()
     df = pd.read_csv(filein, sep="\t")
     df.columns = ['Scan',
