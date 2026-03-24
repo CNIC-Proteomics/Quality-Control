@@ -16,8 +16,15 @@ import qc_report as qc
 # Ignore numpy warnings
 # np.warnings.filterwarnings("ignore")
 
+
 def run_mzml_parse(filesinraw, folderoutraw, ThermoRawFileParserpath):
-    subprocess.run([ThermoRawFileParserpath, filesinraw, folderoutraw, '-f=2', '-m=0'], shell=True)
+    # subprocess.run([ThermoRawFileParserpath, filesinraw, folderoutraw, '-f=2', '-m=0'], shell=True)
+    subprocess.run(
+        [ThermoRawFileParserpath, filesinraw, folderoutraw, '-f=2', '-m=0'],
+        check=True,     # <-- raises CalledProcessError on failure
+        shell=True     # safer
+    )
+
 
 def launcher_task(filesin, folders, inpathraw, log):
     filesmzML = [os.path.join(os.path.dirname(i), folders, os.path.basename(i).replace(".raw", ".mzML")) for i in filesin]
@@ -56,6 +63,7 @@ def launcher_task(filesin, folders, inpathraw, log):
 
 def main(args):
     logging.info("STARTING QUALITY CONTROL WORKFLOW")
+    ROOT_DIR = Path(__file__).parent.parent
     multiprocessing.freeze_support()
     with open(args.params, "r") as f:
         x = f.read().splitlines()
@@ -81,13 +89,13 @@ def main(args):
     num_threads = num_threads if num_threads > 0 else None
     isocorrm = iqc.correcmatrix(isotopic_Distribution_table, isobaric_labeling_isotopic_correction)
     isotag, isoname = iqc.isobaric_labelling(isobaric_labeling)
-    msfraggerpath = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), "msfragger", "MSFragger.jar")
+    msfraggerpath = os.path.join(ROOT_DIR, "lib", "MSFragger", "MSFragger.jar")
     if not os.path.isfile(msfraggerpath):
         logging.error("MSFragger not found in " + str(msfraggerpath))
         sys.exit()
-    ThermoRawFileParserpath = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), "ThermoRawFileParser", "ThermoRawFileParser.exe")
+    ThermoRawFileParserpath = os.path.join(ROOT_DIR, "lib", "ThermoRawFileParser", "ThermoRawFileParser.exe")
     if not os.path.isfile(ThermoRawFileParserpath):
-        logging.error("ThermoRawFileParserpath not found in " + str(ThermoRawFileParserpath))
+        logging.error("ThermoRawFileParser not found in " + str(ThermoRawFileParserpath))
         sys.exit()
     log = np.array([[raw_parser, msfragger, pratio, mzml_parser, QC_report], [raw_parser, msfragger, pratio, mzml_parser, QC_report]])
     fileslist, log, folders = launcher_task(args.filesin, args.folders, args.raw, log)
@@ -98,7 +106,17 @@ def main(args):
         logging.info("Starting ThermoRawFileParser")
         start = time.time()
         with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
-            executor.map(run_mzml_parse, filesinraw, repeat(folderoutraw), repeat(ThermoRawFileParserpath))
+            futures = executor.map(run_mzml_parse,
+                                   filesinraw,
+                                   repeat(folderoutraw),
+                                   repeat(ThermoRawFileParserpath))
+            try:
+                for _ in futures:
+                    pass
+            except:
+                logging.error("Error running ThermoRawFileParser")
+                executor.shutdown(cancel_futures=True)
+                sys.exit()
         end = time.time()
         timer = divmod(end - start, 60)
         logging.info("Finished ThermoRawFileParser in " + str(timer[0]) + " Minutes and " + str(round(timer[1], 4)) + " Seconds")
