@@ -13,12 +13,7 @@ import src.iso_quan_and_correction as iqc
 import src.mzml_parser_completo as mpc
 import src.pratiomsfragger as prms
 import src.qc_report as qc
-
-
-def run_mzml_parse(filesinraw, folderoutraw, ThermoRawFileParserpath):
-    subprocess.run([ThermoRawFileParserpath, filesinraw, folderoutraw, '-f=2', '-m=0'],
-                   check=True, shell=True)
-
+import src.worker as wu
 
 def launcher_task(filesin, folders, inpathraw, log):
     filesmzML = [os.path.join(folders, os.path.basename(i).replace(".raw", ".mzML")) for i in filesin]
@@ -58,7 +53,6 @@ def launcher_task(filesin, folders, inpathraw, log):
 def main(args):
     logging.info("STARTING QUALITY CONTROL WORKFLOW")
     ROOT_DIR = Path(__file__).parent
-    multiprocessing.freeze_support()
     with open(args.params, "r") as f:
         x = f.read().splitlines()
     x = [a.replace(" ", "") for a in x]
@@ -100,7 +94,7 @@ def main(args):
         logging.info("Starting ThermoRawFileParser")
         start = time.time()
         with concurrent.futures.ProcessPoolExecutor(max_workers=num_threads) as executor:
-            futures = executor.map(run_mzml_parse,
+            futures = executor.map(wu.run_mzml_parse,
                                    filesinraw,
                                    repeat(folderoutraw),
                                    repeat(ThermoRawFileParserpath))
@@ -149,6 +143,8 @@ if __name__ == "__main__":
 
         ''')
     multiprocessing.freeze_support()
+    # multiprocessing.set_executable(sys.executable)
+    # multiprocessing.set_start_method("spawn", force=True)
     parser = argparse.ArgumentParser()
     parser.add_argument("-r", "--raw",    required=True, help="raw file or raw folder", type=Path)
     parser.add_argument("-p", "--params", required=True, help="parameters file",        type=Path)
