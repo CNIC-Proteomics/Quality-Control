@@ -664,7 +664,7 @@ def sampling_report(mzml, pp):
         table1 = pd.concat([table1, table2], axis=1)
 
     table1 = table1.reset_index().sort_values(by="level_1")
-    table1["in"] = table1["level_1"] + [" "] + table1["level_0"]
+    table1["in"] = table1["level_1"] + [" "]*len(table1) + table1["level_0"]
     table1 = table1.set_index("in")
     table1 = table1[['IDR', 'R1', 'R2', 'R3', 'R4']]
     table1values = table1.values.tolist()
