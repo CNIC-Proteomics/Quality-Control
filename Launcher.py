@@ -8,6 +8,7 @@ import multiprocessing, logging, argparse, os, sys, glob, concurrent.futures, su
 import numpy as np
 from pathlib import Path
 from itertools import repeat
+import psutil
 # Custom modules
 import src.iso_quan_and_correction as iqc
 import src.mzml_parser_completo as mpc
@@ -110,7 +111,8 @@ def main(args):
         logging.info("Finished ThermoRawFileParser in " + str(timer[0]) + " Minutes and " + str(round(timer[1], 4)) + " Seconds")
     if log[1][1] == 1:
         try:
-            subprocess.run((["java", "-jar", msfraggerpath, args.params] + fileslist[1]), check=True, shell=True)
+            mem = "-Xmx" + str(int(round(psutil.virtual_memory().total/pow(1024, 3))/2)) + "g"
+            subprocess.run((["java", mem, "-jar", msfraggerpath, args.params] + fileslist[1]), check=True, shell=True)
         except:
             logging.error("Error running MSFragger")
             sys.exit()
