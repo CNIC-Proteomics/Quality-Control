@@ -46,7 +46,7 @@ def time_atr(mzml):
 
 
 def outQ(data, axis=None):
-    a, b = np.percentile(data, q=[10, 90], out=None, overwrite_input=False, interpolation="linear", keepdims=False)
+    a, b = np.percentile(data, q=[10, 90], out=None, overwrite_input=False, method="linear", keepdims=False)
     c = b - a
     out = data[data < b + 1.5 * c]
     return out
